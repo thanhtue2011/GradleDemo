@@ -5,7 +5,7 @@ import java.util.List;
 import com.asiantech.entity.User;
 
 public interface UserService {
-	public User save(User user);
+	public User save(User user) throws Exception;
 	public List<User> getUsers();
 	public User getUserbyEmail(String email);
 	public User findById(String id);

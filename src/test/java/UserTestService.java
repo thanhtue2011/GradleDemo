@@ -1,4 +1,6 @@
 
+import static org.junit.Assert.*;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.asiantech.entity.User;
 import com.asiantech.repository.UserRepository;
 import com.asiantech.service.impl.UserServiceImpl;
+
 import java.util.Optional;
 
 
@@ -46,7 +49,7 @@ public class UserTestService {
 	
 	@Before
 	public void setup(){
-		//userDAO save
+		//user save
 		Mockito.when(userRepository.save(Mockito.any(User.class))).then(new Answer<User>() {
 			public User answer(InvocationOnMock invocation)
 					throws Throwable {
@@ -63,6 +66,16 @@ public class UserTestService {
 				}
 			}
 		});
+		
+		//user delete
+		Mockito.doAnswer(new Answer<Object>() {
+			public Object answer(InvocationOnMock invocation) throws Throwable {
+				List<User> listUser = createListUser();
+				User user = (User) invocation.getArguments()[0];
+				listUser.remove(user);
+				return null;
+			}
+		}).when(userRepository).delete(Mockito.any(User.class));
 		
 		//getUsers
 		
@@ -97,10 +110,15 @@ public class UserTestService {
 	}
 
 	@Test
-	public void testSave() {
+	public void testSave() throws Exception {
 		User user = createUser();
 		user = userServiceImpl.save(user);
 		Assert.assertTrue("".equals(user.getPassword()));
+	}
+	@Test
+	public void testDelete() throws Exception {
+		User  user = userServiceImpl.delete("5");
+		Assert.assertTrue(user == null);
 	}
 
 	@Test
